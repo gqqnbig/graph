@@ -20,42 +20,43 @@ def getEdgeLabel(m):
 	return edge_labels
 
 
-# m = [['a', 0, 0],
-# 	 [0, 'b', 'c'],
-# 	 [0, 0, 0]]
+def showGraph(m, printUnlabeledNodes: bool):
+	size = len(m)
+	vertexes = {}
+	vertexes = {0: 'root', 1: 'X'}
+	if printUnlabeledNodes:
+		vertexes.update({i: i for i in range(2, size)})
+	# print(f'There are {size} nodes in the graph. The first node is root, the second is X, the remaining is {vertexes}.')
 
-m = [
-	[0, 0, 0, 0],
-	[0, 0, 0, 0],
-	[0, 'a', 0, 'd'],
-	['h', 0, 'z', 0],
-]
+	edge_labels = getEdgeLabel(m)
 
-# m = [
-# 	[0, 0, 0, 0],
-# 	[0, 0, 0, 0],
-# 	[0, 1, 0, 1],
-# 	[1, 0, 1, 0],
-# ]
+	m = (numpy.array(m) != '0') + 0
 
-size = len(m)
-vertexes = {}
-vertexes = {0: 'root', 1: 'X'}
-vertexes.update({i: i for i in range(2, size)})
-# print(f'There are {size} nodes in the graph. The first node is root, the second is X, the remaining is {vertexes}.')
+	# m = numpy.array(m)
+	G = nx.from_numpy_matrix(m, create_using=nx.DiGraph)
+	pos = nx.spring_layout(G, seed=3113794651)  # positions for all nodes
 
-edge_labels = getEdgeLabel(m)
+	# G2.add_nodes_from(vertexes)
+	# nx.draw(G, pos)
+	nx.draw_networkx_nodes(G, pos)
+	nx.draw_networkx_labels(G, pos, vertexes, font_size=22, font_color="red")
+	nx.draw_networkx_edges(G, pos, arrows=True, arrowsize=20)
+	nx.draw_networkx_edge_labels(G, pos, edge_labels, bbox=dict(alpha=0))
+	plt.axis('equal')
+	plt.show()
 
-m = (numpy.array(m) != '0') + 0
 
-# m = numpy.array(m)
-G = nx.from_numpy_matrix(m, create_using=nx.DiGraph)
-pos = nx.spring_layout(G, seed=3113794652)  # positions for all nodes
+if __name__ == '__main__':
+	m = [
+		[0, 0, 0, 0, 0, 0, 'i', 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 'a', 0, 'd', 0, 0, 0, 0, 0],
+		['h', 0, 0, 0, 0, 'j', 0, 0, 0],
+		[0, 0, 0, 'g', 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 0],
+		[0, 0, 0, 0, 0, 0, 0, 'f', 0],
+		[0, 0, 0, 0, 0, 0, 0, 0, 'c'],
+		['e', 0, 'b', 0, 0, 0, 0, 0, 0],
+	]
 
-# G2.add_nodes_from(vertexes)
-# nx.draw(G, pos)
-nx.draw_networkx_labels(G, pos, vertexes, font_size=22, font_color="red")
-nx.draw_networkx_edges(G, pos, arrows=True, arrowsize=20)
-nx.draw_networkx_edge_labels(G, pos, edge_labels, bbox=dict(alpha=0))
-# plt.axis('equal')
-plt.show()
+	showGraph(m, True)
