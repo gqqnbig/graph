@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import scipy as sp
 import scipy.sparse  # call as sp.sparse
-import numpy
+import numpy as np
 
 
 # As of April 2021, matplotlib draws unlabeled curved edges or labeled straight edges.
@@ -30,7 +30,7 @@ def showGraph(m, printUnlabeledNodes: bool):
 
 	edge_labels = getEdgeLabel(m)
 
-	m = (numpy.array(m) != '0') + 0
+	m = (np.array(m) != '0') + 0
 
 	# m = numpy.array(m)
 	G = nx.from_numpy_matrix(m, create_using=nx.DiGraph)
@@ -46,7 +46,31 @@ def showGraph(m, printUnlabeledNodes: bool):
 	plt.show()
 
 
+
+def swap(m, i, j):
+	"""
+	Swap row i and j of the matrix as well as column i and column j.
+
+	:param m:
+	:param i:
+	:param j:
+	:return:
+	"""
+	isNp = m is np.ndarray
+	if isNp is False:
+		m = np.array(m)
+
+	m[[i, j], :] = m[[j, i], :]
+	m[:, [i, j]] = m[:, [j, i]]
+
+	if isNp is False:
+		return m.tolist()
+	else:
+		return m
+
+
 if __name__ == '__main__':
+	# m[i][j] means i has an edge to j.
 	m = [
 		[0, 0, 0, 0, 0, 0, 'i', 0, 0],
 		[0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -59,4 +83,5 @@ if __name__ == '__main__':
 		['e', 0, 'b', 0, 0, 0, 0, 0, 0],
 	]
 
+	# m2 = swap(m, 0, 1)
 	showGraph(m, True)
