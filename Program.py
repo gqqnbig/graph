@@ -44,7 +44,6 @@ def showGraph(m, printUnlabeledNodes: bool):
 	plt.show()
 
 
-
 def swap(m, i, j):
 	"""
 	Swap row i and j of the matrix as well as column i and column j.
@@ -101,7 +100,14 @@ def _sort(m, labeledNodeCount, iteration):
 	return m
 
 
-def sort(m, labeledNodeCount):
+def canonicalize(m, labeledNodeCount):
+	"""
+	m[i][j] means i has an edge to j.
+
+	:param m:
+	:param labeledNodeCount:
+	:return:
+	"""
 	size = len(m)
 	if size <= labeledNodeCount:
 		return m
@@ -141,7 +147,7 @@ if __name__ == '__main__':
 
 	# m2 = swap(m, 0, 1)
 	# m2 = _sort(m, 2, 2)
-	m2 = sort(m, 2)
+	m2 = canonicalize(m, 2)
 	prettyPrint(m2)
 
 	showGraph(m2, False)
