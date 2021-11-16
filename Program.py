@@ -111,8 +111,17 @@ def sort(m, labeledNodeCount):
 	return m
 
 
-def prettyPrint(m, nonePlaceholder='-'):
-	print('\n'.join(['\t'.join([str(cell) if cell is not None else nonePlaceholder for cell in row]) for row in m]))
+def prettyPrint(m, nodeNames=None, nonePlaceholder='-'):
+	if nodeNames:
+		print('\t' + '\t'.join(nodeNames))
+
+	rows = ['\t'.join([str(cell) if cell is not None else nonePlaceholder for cell in row]) for row in m]
+
+	if nodeNames:
+		for i in range(len(rows)):
+			rows[i] = nodeNames[i] + '\t' + rows[i]
+
+	print('\n'.join(rows))
 
 
 if __name__ == '__main__':
