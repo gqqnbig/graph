@@ -1,7 +1,5 @@
 import matplotlib.pyplot as plt
 import networkx as nx
-import scipy as sp
-import scipy.sparse  # call as sp.sparse
 import numpy as np
 
 
@@ -14,8 +12,8 @@ def getEdgeLabel(m):
 	size = len(m)
 	for i in range(size):
 		for j in range(size):
-			if m[j][i] != 0:
-				edge_labels[(i, j)] = m[j][i]
+			if m[i][j]:
+				edge_labels[(i, j)] = m[i][j]
 
 	return edge_labels
 
@@ -30,7 +28,7 @@ def showGraph(m, printUnlabeledNodes: bool):
 
 	edge_labels = getEdgeLabel(m)
 
-	m = (np.array(m) != '0') + 0
+	m = (np.array(m) != None) + 0
 
 	# m = numpy.array(m)
 	G = nx.from_numpy_matrix(m, create_using=nx.DiGraph)
@@ -69,19 +67,72 @@ def swap(m, i, j):
 		return m
 
 
+def _sortKeys(row, m, startIndex):
+	for i in range(startIndex, len(row)):
+		for j in range(i + 1, len(row)):
+			if row[i] is None and row[j] is None:
+				continue
+			elif row[i] is None and row[j] is not None:
+				m = swap(m, i, j)
+				t = row[i]
+				row[i] = row[j]
+				row[j] = t
+			elif row[i] is not None and row[j] is None:
+				continue
+			elif row[i] > row[j]:
+				m = swap(m, i, j)
+				t = row[i]
+				row[i] = row[j]
+				row[j] = t
+
+	return m
+
+
+def _sort(m, labeledNodeCount, iteration):
+	# m[i][j] means i has an edge to j.
+	size = len(m)
+	if iteration >= size:
+		return m
+
+	row = m[iteration]
+
+	assert labeledNodeCount + iteration < size
+	m = _sortKeys(row, m, labeledNodeCount + iteration)
+	return m
+
+
+def sort(m, labeledNodeCount):
+	size = len(m)
+	if size <= labeledNodeCount:
+		return m
+
+	for i in range(size - labeledNodeCount):
+		m = _sort(m, labeledNodeCount, i)
+	return m
+
+
+def prettyPrint(m, nonePlaceholder='-'):
+	print('\n'.join(['\t'.join([str(cell) if cell is not None else nonePlaceholder for cell in row]) for row in m]))
+
+
 if __name__ == '__main__':
 	# m[i][j] means i has an edge to j.
 	m = [
-		[0, 0, 0, 0, 0, 0, 'i', 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 'a', 0, 'd', 0, 0, 0, 0, 0],
-		['h', 0, 0, 0, 0, 'j', 0, 0, 0],
-		[0, 0, 0, 'g', 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 0],
-		[0, 0, 0, 0, 0, 0, 0, 'f', 0],
-		[0, 0, 0, 0, 0, 0, 0, 0, 'c'],
-		['e', 0, 'b', 0, 0, 0, 0, 0, 0],
+		[None, None, None, None, None, None, 'i', None, None],
+		[None, None, None, None, None, None, None, None, None],
+		[None, 'a', None, 'd', None, None, None, None, None],
+		['h', None, None, None, None, 'j', None, None, None],
+		[None, None, None, 'g', None, None, None, None, None],
+		[None, None, None, None, None, None, None, None, None],
+		[None, None, None, None, None, None, None, 'f', None],
+		[None, None, None, None, None, None, None, None, 'c'],
+		['e', None, 'b', None, None, None, None, None, None],
 	]
+	showGraph(m, False)
 
 	# m2 = swap(m, 0, 1)
-	showGraph(m, True)
+	# m2 = _sort(m, 2, 2)
+	m2 = sort(m, 2)
+	prettyPrint(m2)
+
+	showGraph(m2, False)
