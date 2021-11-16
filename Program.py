@@ -39,7 +39,7 @@ def showGraph(m, printUnlabeledNodes: bool):
 	nx.draw_networkx_nodes(G, pos)
 	nx.draw_networkx_labels(G, pos, vertexes, font_size=22, font_color="red")
 	nx.draw_networkx_edges(G, pos, arrows=True, arrowsize=20)
-	nx.draw_networkx_edge_labels(G, pos, edge_labels, bbox=dict(alpha=0))
+	nx.draw_networkx_edge_labels(G, pos, edge_labels, bbox=dict(alpha=0), font_size=15)
 	plt.axis('equal')
 	plt.show()
 
