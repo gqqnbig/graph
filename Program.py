@@ -1,3 +1,5 @@
+import hashlib
+
 import matplotlib.pyplot as plt
 import networkx as nx
 import numpy as np
@@ -131,6 +133,14 @@ def prettyPrint(m, nodeNames=None, nonePlaceholder='-'):
 			rows[i] = nodeNames[i] + '\t' + rows[i]
 
 	print('\n'.join(rows))
+
+
+def getHash(m):
+	s = [''.join([str(cell) if cell is not None else '-' for cell in row]) for row in m]
+	s = ''.join(s)
+
+	sha = hashlib.sha1(s.encode('utf-8'))
+	return sha.hexdigest()
 
 
 if __name__ == '__main__':
