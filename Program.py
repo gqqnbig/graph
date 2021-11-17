@@ -123,12 +123,19 @@ def _sort(m, labeledNodeCount, iteration):
 	if iteration >= labeledNodeCount:
 		i = _findSmallestRow(m, iteration)
 		m = swap(m, i, iteration)
+		labeledNodeCount += 1
 
 	row = m[iteration]
 
-	if labeledNodeCount + iteration < size:
-		m = _sortKeys(row, m, labeledNodeCount + iteration)
-	return m
+	if labeledNodeCount < size:
+		m = _sortKeys(row, m, labeledNodeCount)
+		# If this node has outgoing edges, we can them label a node.
+		if row[labeledNodeCount] is not None:
+			labeledNodeCount += 1
+
+	print(f'Iteration={iteration}, we have labelled {labeledNodeCount} nodes.')
+	prettyPrint(m)
+	return m, labeledNodeCount
 
 
 def canonicalize(m, labeledNodeCount):
@@ -144,7 +151,7 @@ def canonicalize(m, labeledNodeCount):
 		return m
 
 	for i in range(size):
-		m = _sort(m, labeledNodeCount, i)
+		m, labeledNodeCount = _sort(m, labeledNodeCount, i)
 	return m
 
 
