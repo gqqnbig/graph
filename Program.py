@@ -20,7 +20,7 @@ def getEdgeLabel(m):
 	return edge_labels
 
 
-def showGraph(m, printUnlabeledNodes: bool, seed=None, title=None):
+def showGraph(m, printUnlabeledNodes: bool, seed=None, title=None, layout=None):
 	size = len(m)
 	vertexes = {}
 	vertexes = {0: 'root', 1: 'X'}
@@ -34,7 +34,10 @@ def showGraph(m, printUnlabeledNodes: bool, seed=None, title=None):
 
 	# m = numpy.array(m)
 	G = nx.from_numpy_matrix(m, create_using=nx.DiGraph)
-	pos = nx.spring_layout(G, seed=seed)  # positions for all nodes
+	if layout is None:
+		pos = nx.spring_layout(G, seed=seed)  # positions for all nodes
+	else:
+		pos = layout(G)
 
 	# G2.add_nodes_from(vertexes)
 	# nx.draw(G, pos)
@@ -46,6 +49,8 @@ def showGraph(m, printUnlabeledNodes: bool, seed=None, title=None):
 		plt.title(title)
 	plt.axis('equal')
 	plt.show()
+	# plt.savefig(title + '.png')
+	# plt.close('all')
 
 
 def swap(m, i, j):
