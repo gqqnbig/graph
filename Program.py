@@ -53,6 +53,9 @@ def swap(m, i, j):
 	:param j:
 	:return:
 	"""
+	if i == j:
+		return m
+
 	isNp = m is np.ndarray
 	if isNp is False:
 		m = np.array(m)
