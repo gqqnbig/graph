@@ -1,6 +1,6 @@
-import networkx as nx
+import random
 
-import pytest
+import networkx as nx
 
 import Program
 
@@ -93,16 +93,32 @@ def assignEdgeLabel(m):
 # 	Program.prettyPrint(m2)
 
 
-def canonicalizeTestRandom():
+def test_canonicalizeHashRandom():
+	labeledNodeCount = 2
 	G = nx.generators.scale_free_graph(8, delta_out=0.1)
 	A = nx.adjacency_matrix(G)
 	m = A.toarray().tolist()
 	assignEdgeLabel(m)
 
-	Program.showGraph(m, False)
-	m2 = Program.canonicalize(m, 2)
-	Program.prettyPrint(m2)
-	Program.showGraph(m2, False)
+	# Program.showGraph(m, False)
+
+	m1 = m.copy()
+	size = len(m)
+	for c in range(5):
+		i = random.randrange(labeledNodeCount, size)
+		j = random.randrange(labeledNodeCount, size)
+		m1 = Program.swap(m1, i, j)
+
+	# m2 = Program.canonicalize(m, 2)
+	print('m')
+	Program.prettyPrint(m)
+
+	print('m1')
+	Program.prettyPrint(m1)
+
+	# Program.showGraph(m2, False)
+
+	assert Program.getHash(Program.canonicalize(m, labeledNodeCount)) == Program.getHash(Program.canonicalize(m1, labeledNodeCount))
 
 
 def test_canonicalizeHash():
@@ -135,5 +151,3 @@ def test_canonicalizeHash():
 	assert hash1 == hash2, 'Isomorphic graphs gave different hash.'
 
 
-if __name__ == '__main__':
-	canonicalizeTestRandom()
