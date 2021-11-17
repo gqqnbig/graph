@@ -5,6 +5,17 @@ import pytest
 import Program
 
 
+def test_swapTwice():
+	m1 = [[1, 2, 3],
+		  [4, 5, 6],
+		  [7, 8, 9]]
+	m2 = Program.swap(m1, 0, 1)
+	assert m1 != m2
+
+	m3 = Program.swap(m2, 0, 1)
+	assert m1 == m3
+
+
 def canonicalizeTest1():
 	m = [
 		[None, None, None, None, None, None, 'i', None, None],
