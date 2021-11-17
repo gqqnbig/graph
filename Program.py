@@ -63,6 +63,8 @@ def swap(m, i, j):
 	isNp = m is np.ndarray
 	if isNp is False:
 		m = np.array(m)
+	else:
+		m = m.copy()
 
 	m[[i, j], :] = m[[j, i], :]
 	m[:, [i, j]] = m[:, [j, i]]
