@@ -20,7 +20,7 @@ def getEdgeLabel(m):
 	return edge_labels
 
 
-def showGraph(m, printUnlabeledNodes: bool):
+def showGraph(m, printUnlabeledNodes: bool, seed=None, title=None):
 	size = len(m)
 	vertexes = {}
 	vertexes = {0: 'root', 1: 'X'}
@@ -34,7 +34,7 @@ def showGraph(m, printUnlabeledNodes: bool):
 
 	# m = numpy.array(m)
 	G = nx.from_numpy_matrix(m, create_using=nx.DiGraph)
-	pos = nx.spring_layout(G, seed=3113794651)  # positions for all nodes
+	pos = nx.spring_layout(G, seed=seed)  # positions for all nodes
 
 	# G2.add_nodes_from(vertexes)
 	# nx.draw(G, pos)
@@ -42,6 +42,8 @@ def showGraph(m, printUnlabeledNodes: bool):
 	nx.draw_networkx_labels(G, pos, vertexes, font_size=22, font_color="red")
 	nx.draw_networkx_edges(G, pos, arrows=True, arrowsize=20)
 	nx.draw_networkx_edge_labels(G, pos, edge_labels, bbox=dict(alpha=0), font_size=15)
+	if title:
+		plt.title(title)
 	plt.axis('equal')
 	plt.show()
 
@@ -92,16 +94,33 @@ def _sortKeys(row, m, startIndex):
 	return m
 
 
+def _findSmallestRow(m, startIndex):
+	"""
+
+	:param m:
+	:param startIndex:
+	:return: the index of the smallest row
+	"""
+	# size = len(m)
+	rows = m[startIndex:]
+	rows = [''.join([e if e else '~' for e in r]) for r in rows]
+	return startIndex + rows.index(min(rows))
+
+
 def _sort(m, labeledNodeCount, iteration):
 	# m[i][j] means i has an edge to j.
 	size = len(m)
 	if iteration >= size:
 		return m
 
+	if iteration >= labeledNodeCount:
+		i = _findSmallestRow(m, iteration)
+		m = swap(m, i, iteration)
+
 	row = m[iteration]
 
-	assert labeledNodeCount + iteration < size
-	m = _sortKeys(row, m, labeledNodeCount + iteration)
+	if labeledNodeCount + iteration < size:
+		m = _sortKeys(row, m, labeledNodeCount + iteration)
 	return m
 
 
@@ -117,7 +136,7 @@ def canonicalize(m, labeledNodeCount):
 	if size <= labeledNodeCount:
 		return m
 
-	for i in range(size - labeledNodeCount):
+	for i in range(size):
 		m = _sort(m, labeledNodeCount, i)
 	return m
 
