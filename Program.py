@@ -172,21 +172,39 @@ def getHash(m):
 if __name__ == '__main__':
 	# m[i][j] means i has an edge to j.
 	m = [
-		[None, None, None, None, None, None, 'i', None, None],
-		[None, None, None, None, None, None, None, None, None],
-		[None, 'a', None, 'd', None, None, None, None, None],
-		['h', None, None, None, None, 'j', None, None, None],
-		[None, None, None, 'g', None, None, None, None, None],
-		[None, None, None, None, None, None, None, None, None],
-		[None, None, None, None, None, None, None, 'f', None],
-		[None, None, None, None, None, None, None, None, 'c'],
-		['e', None, 'b', None, None, None, None, None, None],
+		[None, 'a', None, None, None, None, None, None],
+		[None, None, 'b', None, None, None, None, None],
+		['c', None, 'd', None, None, None, None, None],
+		['e', None, 'f', None, None, None, None, None],
+		[None, None, 'g', None, None, None, None, None],
+		[None, 'h', None, None, None, None, None, None],
+		[None, None, 'i', None, None, None, None, None],
+		[None, None, 'j', None, None, None, None, None],
 	]
-	showGraph(m, False)
+	showGraph(m, False, seed=1, title='m1 before')
+	m_ = canonicalize(m, 2)
+	showGraph(m_, False, seed=1, title='m1 after')
+	print(getHash(m_))
 
-	# m2 = swap(m, 0, 1)
-	# m2 = _sort(m, 2, 2)
-	m2 = canonicalize(m, 2)
-	prettyPrint(m2)
+	m3 = [  # root	X	1	2	3	4	5	6	7
+		[None, None, None, 'j', None, None, None, None],
+		[None, None, None, 'b', None, None, None, None],
+		[None, None, None, 'f', 'e', None, None, None],
+		[None, None, None, 'd', 'c', None, None, None],
+		[None, 'a', None, None, None, None, None, None],
+		[None, 'h', None, None, None, None, None, None],
+		[None, None, None, 'g', None, None, None, None],
+		[None, None, None, 'i', None, None, None, None],
+	]
+	showGraph(m3, True, seed=3113794651, title='m3 before')
+	m3_ = canonicalize(m3, 2)
+	showGraph(m3_, True, seed=3113794663, title='m3 after')
+	print(getHash(m3_))
 
-	showGraph(m2, False)
+# m2 = swap(m, 0, 1)
+# m2 = _sort(m, 2, 2)
+# prettyPrint(m2)
+#
+# showGraph(m2, False)
+#
+# print(getHash(m2))

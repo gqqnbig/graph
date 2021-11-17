@@ -1,6 +1,7 @@
 import random
 
 import networkx as nx
+import pytest
 
 import Program
 
@@ -148,6 +149,31 @@ def test_canonicalizeHash():
 	hash1 = Program.getHash(Program.canonicalize(m1, 2))
 	hash2 = Program.getHash(Program.canonicalize(m2, 2))
 
-	assert hash1 == hash2, 'Isomorphic graphs gave different hash.'
+	assert hash1 == hash2, 'Isomorphic graphs should return the same hash.'
 
 
+@pytest.mark.skip
+def test_canonicalizeHash1():
+	m1 = [
+		['a', 'b', None, None, None, None, None, None],
+		[None, None, 'c', None, None, None, None, None],
+		['d', None, None, None, None, None, None, None],
+		['e', None, None, None, None, None, None, 'f'],
+		['g', None, None, None, None, None, 'h', None],
+		[None, None, None, None, None, None, None, 'i'],
+		[None, None, None, None, None, None, None, None],
+		[None, None, None, None, None, None, None, None],
+	]
+
+	Program.showGraph(m1, False, title='m1', layout=nx.planar_layout)
+
+	m2 = Program.canonicalize(m1, 2)
+	Program.showGraph(m2, False, title='m2', layout=nx.planar_layout)
+
+
+# m2 = Program.canonicalize(m1, 2)
+# Program.showGraph(m2, False)
+
+
+if __name__ == '__main__':
+	test_canonicalizeHash1()
