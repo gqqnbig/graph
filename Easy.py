@@ -52,7 +52,7 @@ def canonicalize(m, l: List[int]):
 		while i < len(l):
 			r = findMinNext(m, l[i], l)
 			if r is not None:
-				l.append(r[1][-1])
+				l.append(r[1][0])
 				loop = True
 
 			i += 1
