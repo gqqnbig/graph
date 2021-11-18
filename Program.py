@@ -41,7 +41,7 @@ def showGraph(m, printUnlabeledNodes: bool, seed=None, title=None, layout=None):
 
 	# G2.add_nodes_from(vertexes)
 	# nx.draw(G, pos)
-	nx.draw_networkx_nodes(G, pos)
+	nx.draw_networkx_nodes(G, pos, alpha=0.5)
 	nx.draw_networkx_labels(G, pos, vertexes, font_size=22, font_color="red")
 	nx.draw_networkx_edges(G, pos, arrows=True, arrowsize=20)
 	nx.draw_networkx_edge_labels(G, pos, edge_labels, bbox=dict(alpha=0), font_size=15)
@@ -50,7 +50,7 @@ def showGraph(m, printUnlabeledNodes: bool, seed=None, title=None, layout=None):
 	plt.axis('equal')
 	plt.show()
 	# plt.savefig(title + '.png')
-	# plt.close('all')
+	plt.close('all')
 
 
 def swap(m, i, j):
@@ -108,6 +108,24 @@ def _findSmallestRow(m, startIndex):
 	return startIndex + rows.index(min(rows))
 
 
+def _getRow(m, index):
+	if m is not np.ndarray:
+		m = np.array(m)
+
+	sm = m[index:, :]
+
+	size = len(sm)
+	row = []
+	for c in sm.T.tolist():
+		v = _safeNone(c[0]) + ''.join([e if e is not None else '' for e in c[1:]])
+		if len(v) < size:
+			v += '~' * (size - len(v))
+		row.append(v)
+
+	# row = [''.join([_safeNone(e) for e in c]) for c in sm.T.tolist()]
+	return row
+
+
 def _sort(m, labeledNodeCount, iteration):
 	# m[i][j] means i has an edge to j.
 	size = len(m)
@@ -119,12 +137,13 @@ def _sort(m, labeledNodeCount, iteration):
 		m = swap(m, i, iteration)
 		labeledNodeCount += 1
 
-	row = m[iteration].copy()
+	row = _getRow(m, iteration)
+	# row = m[iteration].copy()
 
 	if labeledNodeCount < size:
 		m = _sortKeys(row, m, labeledNodeCount)
 		# If this node has outgoing edges, we can them label a node.
-		if row[labeledNodeCount] is not None:
+		if m[iteration][labeledNodeCount] is not None:
 			labeledNodeCount += 1
 
 	print(f'Iteration={iteration}, we have labelled {labeledNodeCount} nodes.')
@@ -149,7 +168,7 @@ def canonicalize(m, labeledNodeCount):
 	return m
 
 
-def prettyPrint(m, nodeNames=None, nonePlaceholder='-'):
+def pretty(m, nodeNames=None, nonePlaceholder='-'):
 	if nodeNames:
 		print('\t' + '\t'.join(nodeNames))
 
@@ -158,6 +177,19 @@ def prettyPrint(m, nodeNames=None, nonePlaceholder='-'):
 	if nodeNames:
 		for i in range(len(rows)):
 			rows[i] = nodeNames[i] + '\t' + rows[i]
+
+	return '\n'.join(rows)
+
+
+def prettyPrint(m, nodeNames=None, nonePlaceholder='-'):
+	if nodeNames:
+		print('\t' + '\t'.join(nodeNames))
+
+	rows = ['\t'.join([str(cell) if cell is not None else nonePlaceholder for cell in row]) for row in m]
+
+	if nodeNames:
+		for i in range(len(rows)):
+			rows[i] = (nodeNames[i] if i < len(nodeNames) else " ") + '\t' + rows[i]
 
 	print('\n'.join(rows))
 
@@ -172,40 +204,36 @@ def getHash(m):
 
 if __name__ == '__main__':
 	# m[i][j] means i has an edge to j.
-	m = [
-		[None, 'a', None, None, None, None, None, None],
-		[None, None, 'b', None, None, None, None, None],
-		['c', None, 'd', None, None, None, None, None],
-		['e', None, 'f', None, None, None, None, None],
-		[None, None, 'g', None, None, None, None, None],
-		[None, 'h', None, None, None, None, None, None],
-		[None, None, 'i', None, None, None, None, None],
-		[None, None, 'j', None, None, None, None, None],
-	]
-	showGraph(m, False, seed=1, title='m1 before')
-	m_ = canonicalize(m, 2)
-	showGraph(m_, False, seed=1, title='m1 after')
-	print(getHash(m_))
+	m1 = [
+		[None, None, 'c', None, 'c', None, None, None],
+		['a', None, None, None, None, None, None, None],
+		[None, 'e', None, None, None, None, None, None],
+		[None, None, 'f', None, None, None, None, None],
+		['d', None, None, None, None, None, None, None],
+		[None, None, None, None, 'e', None, None, None],
+		['f', None, None, None, None, None, None, None],
+		['a', None, None, None, None, None, None, None]]
 
-	m3 = [  # root	X	1	2	3	4	5	6	7
-		[None, None, None, 'j', None, None, None, None],
-		[None, None, None, 'b', None, None, None, None],
-		[None, None, None, 'f', 'e', None, None, None],
-		[None, None, None, 'd', 'c', None, None, None],
-		[None, 'a', None, None, None, None, None, None],
-		[None, 'h', None, None, None, None, None, None],
-		[None, None, None, 'g', None, None, None, None],
-		[None, None, None, 'i', None, None, None, None],
-	]
-	showGraph(m3, True, seed=3113794651, title='m3 before')
-	m3_ = canonicalize(m3, 2)
-	showGraph(m3_, True, seed=3113794663, title='m3 after')
-	print(getHash(m3_))
+	m1 = swap(m1, 3, 2)
+	m1 = swap(m1, 2, 5)
+	m1 = swap(m1, 3, 7)
+	m1 = swap(m1, 4, 2)
+	m1 = swap(m1, 5, 2)
 
-# m2 = swap(m, 0, 1)
-# m2 = _sort(m, 2, 2)
-# prettyPrint(m2)
-#
-# showGraph(m2, False)
-#
-# print(getHash(m2))
+	showGraph(m1, False, title='m1', layout=nx.planar_layout)
+	# m1c=canonicalize(m1, 2)
+	# showGraph(m1c, False, title='m2', layout=nx.planar_layout)
+	# print(getHash(m1c))
+
+	m2 = [
+		[None, None, 'c', 'c', None, None, None, None],
+		['a', None, None, None, None, None, None, None],
+		[None, None, None, None, 'f', None, None, None],
+		['d', None, None, None, None, None, None, None],
+		[None, 'e', None, None, None, None, None, None],
+		['f', None, None, None, None, None, None, None],
+		[None, None, None, 'e', None, None, None, None],
+		['a', None, None, None, None, None, None, None],
+	]
+	showGraph(m2, False, title='m2', layout=nx.planar_layout)
+# print(getHash(canonicalize(m2, 2)))
