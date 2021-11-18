@@ -88,6 +88,13 @@ def _sortKeys(row: list, m, startIndex):
 	return m
 
 
+def _safeNone(v):
+	if v is None:
+		return '~'
+	else:
+		return v
+
+
 def _findSmallestRow(m, startIndex):
 	"""
 
@@ -97,7 +104,7 @@ def _findSmallestRow(m, startIndex):
 	"""
 	# size = len(m)
 	rows = m[startIndex:]
-	rows = [''.join([e if e else '~' for e in r]) for r in rows]
+	rows = [''.join([_safeNone(e) for e in r]) for r in rows]
 	return startIndex + rows.index(min(rows))
 
 
