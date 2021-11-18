@@ -80,24 +80,11 @@ def swap(m, i, j):
 		return m
 
 
-def _sortKeys(row, m, startIndex):
-	for i in range(startIndex, len(row)):
-		for j in range(i + 1, len(row)):
-			if row[i] is None and row[j] is None:
-				continue
-			elif row[i] is None and row[j] is not None:
-				m = swap(m, i, j)
-				t = row[i]
-				row[i] = row[j]
-				row[j] = t
-			elif row[i] is not None and row[j] is None:
-				continue
-			elif row[i] > row[j]:
-				m = swap(m, i, j)
-				t = row[i]
-				row[i] = row[j]
-				row[j] = t
+def _sortKeys(row: list, m, startIndex):
+	rows = row[startIndex:]
+	i = startIndex + rows.index(min(rows))
 
+	m = swap(m, startIndex, i)
 	return m
 
 
