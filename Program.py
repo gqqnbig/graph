@@ -128,7 +128,7 @@ def _sort(m, labeledNodeCount, iteration):
 			labeledNodeCount += 1
 
 	print(f'Iteration={iteration}, we have labelled {labeledNodeCount} nodes.')
-	prettyPrint(m)
+	prettyPrint(m, nodeNames=[str(c) for c in range(labeledNodeCount)])
 	return m, labeledNodeCount
 
 
