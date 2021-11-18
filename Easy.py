@@ -20,28 +20,45 @@ def getMinSet(s: list):
 	return res
 
 
-def findMinNext(m, n, l):
-	s = getOutgoingEdges(m, n)
-	s = list(filter(lambda t: t[1] not in l, s))
+def formPath(head, nexts):
+	if len(nexts) == 0:
+		raise Exception('nexts must have at least 1 element')
 
-	if len(s) == 0:
+	paths = [head, nexts[0]]
+	for i in range(1, len(nexts)):
+		paths.append((nexts[i - 1], nexts[i]))
+	return paths
+
+
+def findMinNext(m, n, l, visitedPaths=None):
+	if visitedPaths is None:
+		visitedPaths = []
+	edges = getOutgoingEdges(m, n)
+	edges = list(filter(lambda t: t[1] not in l, edges))
+	edges = list(filter(lambda t: (n, t[1]) not in visitedPaths, edges))
+
+	if len(edges) == 0:
 		return None
 	else:
 		# convert to list
-		s = [([a[0]], [a[1]]) for a in s]
+		edges = [([a[0]], [a[1]]) for a in edges]
 		loop = True
 		while True:
-			s = getMinSet(s)
-			if loop and len(s) > 1:
-				loop = False
-				for i in range(len(s)):
-					res = findMinNext(m, s[i][1][-1], l)
-					if res is not None:
-						s[i] = (s[i][0] + res[0], s[i][1] + res[1])
-						loop = True
+			edges = getMinSet(edges)
+			if loop:
+				if len(edges) > 1:
+					loop = False
+					for i in range(len(edges)):
+						res = findMinNext(m, edges[i][1][-1], l, visitedPaths + formPath(n, edges[i][1]))
+						if res is not None:
+							edges[i] = (edges[i][0] + res[0], edges[i][1] + res[1])
+							loop = True
+				else:
+					break
 			else:
+				print(f'From {n}, two branches are identical')
 				break
-		return s[0]
+		return edges[0]
 
 
 def canonicalize(m, l: List[int]):
