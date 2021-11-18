@@ -29,13 +29,16 @@ def findMinNext(m, n, l):
 	else:
 		# convert to list
 		s = [([a[0]], [a[1]]) for a in s]
+		loop = True
 		while True:
 			s = getMinSet(s)
-			if len(s) > 1:
+			if loop and len(s) > 1:
+				loop = False
 				for i in range(len(s)):
 					res = findMinNext(m, s[i][1][-1], l)
 					if res is not None:
 						s[i] = (s[i][0] + res[0], s[i][1] + res[1])
+						loop = True
 			else:
 				break
 		return s[0]
