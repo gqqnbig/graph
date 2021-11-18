@@ -125,7 +125,7 @@ def _sort(m, labeledNodeCount, iteration):
 		m = swap(m, i, iteration)
 		labeledNodeCount += 1
 
-	row = m[iteration]
+	row = m[iteration].copy()
 
 	if labeledNodeCount < size:
 		m = _sortKeys(row, m, labeledNodeCount)
