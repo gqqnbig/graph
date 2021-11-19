@@ -78,5 +78,25 @@ def test_LongLoopToKnownHomogeneous():
 	Easy.canonicalize(m, l)
 	assert l[1] == 3 or l[1] == 4, '0 points to 3 and 4, and 3, 4 are identical. We can choose either.'
 
+
+@pytest.mark.timeout(5)
+def test_LongLoopHeterogeneous():
+	m = [
+		[None, None, None, 'a', 'a', None, None],
+		[None, None, None, 'd', None, None, None],
+		[None, None, None, None, None, None, 'c'],
+		[None, 'e', None, None, None, 'b', None],
+		[None, None, 'b', None, None, None, 'f'],
+		[None, 'c', None, None, None, None, None],
+		[None, None, None, None, 'd', None, None]
+	]
+
+	# Program.showGraph(m, True)
+
+	l = [0]
+	Easy.canonicalize(m, l)
+	assert l == [0, 3, 5, 1, 4, 2, 6]
+
+
 if __name__ == '__main__':
 	test_SameChildren()
