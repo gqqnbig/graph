@@ -24,7 +24,7 @@ def formPath(head, nexts):
 	if len(nexts) == 0:
 		raise Exception('nexts must have at least 1 element')
 
-	paths = [head, nexts[0]]
+	paths = [(head, nexts[0])]
 	for i in range(1, len(nexts)):
 		paths.append((nexts[i - 1], nexts[i]))
 	return paths
